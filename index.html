@@ -21,7 +21,7 @@
       </a>
       <nav class="nav-actions" aria-label="Accesos principales">
         <a href="#pago" class="nav-link">Pago</a>
-        <a href="#preconsulta" class="nav-link">Preconsulta</a>
+        <a href="#honorarios" class="nav-link">Honorarios</a>
         <a href="#chat" class="nav-link">Chat</a>
         <a href="#areas" class="nav-link">Áreas</a>
       </nav>
@@ -78,71 +78,25 @@
         </div>
       </section>
 
-      <section class="tools-band" id="preconsulta">
+      <section class="estimator-band" id="honorarios">
         <div class="section-heading">
-          <p class="eyebrow">Preconsulta</p>
-          <h2>Resumen inicial del caso</h2>
+          <p class="eyebrow">Transparencia total</p>
+          <h2>Estimador de honorarios</h2>
         </div>
-
-        <div class="preconsult-grid">
-          <form class="preconsult-form" id="caseForm">
-            <label>
-              Área
-              <select id="caseArea" name="area">
-                <option value="laboral">Laboral</option>
-                <option value="familia">Familia</option>
-                <option value="civil">Civil y comercial</option>
-                <option value="sucesiones">Sucesiones</option>
-                <option value="penal">Penal</option>
-                <option value="general">Consulta general</option>
-              </select>
-            </label>
-
-            <fieldset>
-              <legend>Urgencia</legend>
-              <div class="segmented">
-                <label><input type="radio" name="urgency" value="Hoy" checked /> <span>Hoy</span></label>
-                <label><input type="radio" name="urgency" value="48 horas" /> <span>48 h</span></label>
-                <label><input type="radio" name="urgency" value="Esta semana" /> <span>Semana</span></label>
-              </div>
-            </fieldset>
-
-            <label>
-              Relato breve
-              <textarea
-                id="caseDescription"
-                name="description"
-                rows="5"
-                placeholder="Ej.: recibí una intimación, tengo audiencia el viernes, quiero revisar un contrato..."
-              ></textarea>
-            </label>
-
-            <fieldset>
-              <legend>Documentación disponible</legend>
-              <div class="checks">
-                <label><input type="checkbox" value="DNI" /> DNI</label>
-                <label><input type="checkbox" value="Contrato" /> Contrato</label>
-                <label><input type="checkbox" value="Recibos" /> Recibos</label>
-                <label><input type="checkbox" value="Mensajes" /> Mensajes</label>
-                <label><input type="checkbox" value="Notificación" /> Notificación</label>
-                <label><input type="checkbox" value="Expediente" /> Expediente</label>
-              </div>
-            </fieldset>
-          </form>
-
-          <section class="summary-panel" aria-labelledby="summary-title">
-            <h3 id="summary-title">Para tener a mano</h3>
-            <ul id="documentList" class="document-list"></ul>
-            <textarea id="caseSummary" readonly rows="8"></textarea>
-            <button class="btn btn-outline" id="copySummary" type="button">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-              </svg>
-              Copiar resumen
-            </button>
-          </section>
+        <div class="estimator-shell">
+          <div class="service-grid" id="serviceGrid" role="radiogroup" aria-label="Tipo de servicio"></div>
+          <aside class="estimator-result" id="estimatorResult" aria-live="polite">
+            <div class="result-inner">
+              <p class="result-label">Honorario estimado (mínimo)</p>
+              <p class="result-jus" id="resultJus">— JUS</p>
+              <p class="result-pesos" id="resultPesos">Seleccioná un servicio</p>
+              <p class="result-note" id="resultNote">Hacé clic en una de las opciones de la izquierda para ver el estimado.</p>
+              <p class="result-legal">* Honorarios mínimos según arancel vigente del Colegio de Abogados de Córdoba. El monto final puede variar según la complejidad del caso.</p>
+              <a class="btn btn-primary" href="#pago" id="estimatorCta" style="display:none; margin-top: 8px;">Solicitar esta consulta</a>
+            </div>
+          </aside>
         </div>
+        <p class="jus-ref">Valor JUS vigente: <strong>$45.738,02</strong> · <a href="https://www.abogado.org.ar/valores-y-tasas/" target="_blank" rel="noreferrer">Ver fuente oficial &rarr;</a></p>
       </section>
 
       <section class="chat-band" id="chat">

@@ -22,49 +22,46 @@ const resetPayment = document.querySelector("#resetPayment");
 const paymentStatus = document.querySelector("#paymentStatus");
 const phoneReveal = document.querySelector("#phoneReveal");
 const toast = document.querySelector("#toast");
-const caseForm = document.querySelector("#caseForm");
-const caseArea = document.querySelector("#caseArea");
-const caseDescription = document.querySelector("#caseDescription");
-const caseSummary = document.querySelector("#caseSummary");
-const documentList = document.querySelector("#documentList");
-const copySummary = document.querySelector("#copySummary");
 const chatForm = document.querySelector("#chatForm");
 const chatInput = document.querySelector("#chatInput");
 const chatMessages = document.querySelector("#chatMessages");
 const quickPrompts = document.querySelectorAll("[data-chat-prompt]");
 
-const documentSuggestions = {
-  laboral: [
-    "Últimos recibos de sueldo o comprobantes de pago.",
-    "Telegramas, cartas documento o intimaciones.",
-    "Fecha de ingreso, tareas, jornada y datos del empleador."
-  ],
-  familia: [
-    "DNI de las personas involucradas y partidas si corresponde.",
-    "Acuerdos previos, resoluciones o expedientes existentes.",
-    "Gastos, comprobantes y cronología de los hechos relevantes."
-  ],
-  civil: [
-    "Contrato, presupuesto, factura o intercambio de mensajes.",
-    "Datos completos de la otra parte.",
-    "Comprobantes de pago, daños o incumplimientos."
-  ],
-  sucesiones: [
-    "Partida de defunción y datos de herederos.",
-    "Títulos, informes o datos de bienes registrables.",
-    "Partidas que acrediten vínculos familiares."
-  ],
-  penal: [
-    "Citación, denuncia, acta o notificación recibida.",
-    "Datos de fiscalía, comisaría o juzgado si figuran.",
-    "Nombres de testigos y cronología precisa."
-  ],
-  general: [
-    "Documento recibido o conversación que originó la consulta.",
-    "Datos de las partes involucradas.",
-    "Fechas importantes y resultado esperado."
-  ]
-};
+
+const SERVICES = [
+  {
+    id: "verbal",
+    title: "Consulta Verbal",
+    desc: "Orientación sobre situación legal, plazos y opciones posibles.",
+    jus: 2,
+    pesos: "$91.476,04",
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
+  },
+  {
+    id: "escrita",
+    title: "Consulta Escrita",
+    desc: "Análisis documentado con respuesta formal por escrito.",
+    jus: 4,
+    pesos: "$182.952,08",
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+  },
+  {
+    id: "tramite",
+    title: "Causas en Trámite",
+    desc: "Revisión y asesoramiento sobre expediente judicial en curso.",
+    jus: 8,
+    pesos: "$365.904,16",
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+  },
+  {
+    id: "fianza",
+    title: "Fianza Personal",
+    desc: "Garantía personal ante terceros o instituciones financieras.",
+    jus: 200,
+    pesos: "$9.147.604,00",
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+  }
+];
 
 let currentChatState = "INIT";
 
@@ -171,7 +168,6 @@ function setFreeState() {
   callButton.setAttribute("aria-disabled", "false");
   callButton.removeAttribute("data-locked");
   payButton.style.display = "none";
-  buildCaseSummary();
 }
 
 function setPaidState(paid) {
@@ -185,7 +181,7 @@ function setPaidState(paid) {
     callButton.setAttribute("aria-disabled", "false");
     callButton.removeAttribute("data-locked");
     payButton.style.display = "none";
-    buildCaseSummary();
+    if (document.querySelector("#caseSummary")) buildCaseSummary();
     return;
   }
 
@@ -206,7 +202,6 @@ function setPaidState(paid) {
   callButton.classList.add("is-locked");
   callButton.setAttribute("aria-disabled", "true");
   callButton.setAttribute("data-locked", "true");
-  buildCaseSummary();
 }
 
 function showToast(message) {
@@ -241,38 +236,46 @@ function openPayment() {
 }
 
 function buildCaseSummary() {
-  const areaLabel = caseArea.options[caseArea.selectedIndex].textContent;
-  const urgency = new FormData(caseForm).get("urgency");
-  const selectedDocs = [...caseForm.querySelectorAll('input[type="checkbox"]:checked')].map(
-    (node) => node.value
-  );
-  const description = caseDescription.value.trim() || "Sin relato cargado.";
-  const suggestions = documentSuggestions[caseArea.value];
-
-  documentList.innerHTML = suggestions.map((item) => `<li>${item}</li>`).join("");
-
-  caseSummary.value = [
-    `Área: ${areaLabel}`,
-    `Urgencia: ${urgency}`,
-    `Documentación disponible: ${selectedDocs.length ? selectedDocs.join(", ") : "A confirmar"}`,
-    "",
-    `Relato: ${description}`,
-    "",
-    `Honorario de consulta telefónica: ${isPaid() ? "Abonado" : (!hasUsedFree() ? "GRATIS (1° Consulta)" : CONFIG.paymentLabel)}`
-  ].join("\n");
+  const el = document.querySelector("#caseSummary");
+  if (!el) return;
+  el.value = "(Sección eliminada)";
 }
 
-async function copyGeneratedSummary() {
-  caseSummary.select();
-  caseSummary.setSelectionRange(0, caseSummary.value.length);
+function initEstimator() {
+  const serviceGrid = document.querySelector("#serviceGrid");
+  if (!serviceGrid) return;
 
-  try {
-    await navigator.clipboard.writeText(caseSummary.value);
-  } catch {
-    document.execCommand("copy");
-  }
+  const resultJus = document.querySelector("#resultJus");
+  const resultPesos = document.querySelector("#resultPesos");
+  const resultNote = document.querySelector("#resultNote");
+  const estimatorCta = document.querySelector("#estimatorCta");
 
-  showToast("Resumen copiado.");
+  SERVICES.forEach((service) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "service-card";
+    card.setAttribute("aria-label", service.title);
+    card.innerHTML = `
+      <span class="service-icon">${service.icon}</span>
+      <strong class="service-title">${service.title}</strong>
+      <span class="service-jus">${service.jus} JUS</span>
+      <span class="service-pesos">desde ${service.pesos}</span>
+      <span class="service-desc">${service.desc}</span>
+    `;
+    card.addEventListener("click", () => {
+      serviceGrid.querySelectorAll(".service-card").forEach((c) => {
+        c.classList.remove("is-selected");
+        c.setAttribute("aria-pressed", "false");
+      });
+      card.classList.add("is-selected");
+      card.setAttribute("aria-pressed", "true");
+      resultJus.textContent = `${service.jus} JUS`;
+      resultPesos.textContent = `desde ${service.pesos}`;
+      resultNote.textContent = service.desc;
+      estimatorCta.style.display = "inline-flex";
+    });
+    serviceGrid.appendChild(card);
+  });
 }
 
 function addChatMessage(author, text) {
@@ -329,7 +332,7 @@ async function handleChatSubmit(text) {
 
 applyConfig();
 setPaidState(isPaid());
-buildCaseSummary();
+initEstimator();
 const initialMessage = "Hola, soy el asistente legal inicial. Puedo ordenar consultas rápidas. ¿Sobre qué tema de derecho necesitás orientarte hoy?";
 addChatMessage("bot", initialMessage);
 
@@ -392,9 +395,9 @@ callButton.addEventListener("click", (event) => {
   }, 2000);
 });
 
-caseForm.addEventListener("input", buildCaseSummary);
-caseForm.addEventListener("change", buildCaseSummary);
-copySummary.addEventListener("click", copyGeneratedSummary);
+caseForm && caseForm.addEventListener("input", buildCaseSummary);
+caseForm && caseForm.addEventListener("change", buildCaseSummary);
+copySummary && copySummary.addEventListener("click", copyGeneratedSummary);
 
 chatForm.addEventListener("submit", (event) => {
   event.preventDefault();
