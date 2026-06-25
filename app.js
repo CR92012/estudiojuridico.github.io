@@ -15,7 +15,8 @@ const body = document.body;
 const payButton = document.querySelector("#payButton");
 const callButton = document.querySelector("#callButton");
 const paymentDialog = document.querySelector("#paymentDialog");
-const confirmPayment = document.querySelector("#confirmPayment");
+const sendVoucherBtn = document.querySelector("#sendVoucherBtn");
+const closePaymentModal = document.querySelector("#closePaymentModal");
 const resetPayment = document.querySelector("#resetPayment");
 const paymentStatus = document.querySelector("#paymentStatus");
 const phoneReveal = document.querySelector("#phoneReveal");
@@ -216,19 +217,26 @@ function showToast(message) {
   }, 2600);
 }
 
-function openPayment() {
-  if (CONFIG.paymentUrl) {
-    window.open(CONFIG.paymentUrl, "_blank", "noopener,noreferrer");
-    return;
-  }
+let qrGenerated = false;
 
+function openPayment() {
   if (typeof paymentDialog.showModal === "function") {
     paymentDialog.showModal();
+    
+    // Generar el QR una sola vez si no se generó
+    if (!qrGenerated) {
+      new QRCode(document.getElementById("qrcode"), {
+        text: "CAUL.PRENDIDO.TELAR",
+        width: 150,
+        height: 150,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+      qrGenerated = true;
+    }
     return;
   }
-
-  setPaidState(true);
-  showToast("Pago confirmado para prueba.");
 }
 
 function buildCaseSummary() {
@@ -335,11 +343,18 @@ function handleMainAction() {
 
 payButton.addEventListener("click", handleMainAction);
 
-confirmPayment.addEventListener("click", () => {
-  setPaidState(true);
+if (closePaymentModal) {
+  closePaymentModal.addEventListener("click", () => {
+    paymentDialog.close();
+  });
+}
+
+sendVoucherBtn.addEventListener("click", () => {
+  const wsNumber = CONFIG.phoneTel.replace("+", "");
+  const wsText = encodeURIComponent(`Hola, acabo de transferir el honorario para la consulta (${CONFIG.paymentLabel}) al alias CAUL.PRENDIDO.TELAR. Adjunto mi comprobante para habilitar la llamada:`);
+  window.open(`https://wa.me/${wsNumber}?text=${wsText}`, "_blank");
   paymentDialog.close();
-  showToast("Pago confirmado. Llamada habilitada.");
-  callButton.focus();
+  showToast("Redirigiendo a WhatsApp. Una vez verificado, destrabaremos tu llamada.");
 });
 
 resetPayment.addEventListener("click", () => {
