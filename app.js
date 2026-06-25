@@ -352,7 +352,15 @@ callButton.addEventListener("click", (event) => {
   if (callButton.dataset.locked === "true") {
     event.preventDefault();
     showToast(`Primero confirmá el pago de ${CONFIG.paymentLabel}.`);
+    return;
   }
+
+  // Una vez que hace clic en llamar (estando desbloqueado), 
+  // esperamos 2 segundos para que se abra el teléfono y bloqueamos de nuevo.
+  setTimeout(() => {
+    setPaidState(false);
+    showToast("Llamada registrada. Para realizar otra consulta, deberás abonar el honorario.");
+  }, 2000);
 });
 
 caseForm.addEventListener("input", buildCaseSummary);
