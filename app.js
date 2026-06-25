@@ -226,7 +226,7 @@ function openPayment() {
     // Generar el QR una sola vez si no se generó
     if (!qrGenerated) {
       new QRCode(document.getElementById("qrcode"), {
-        text: "CAUL.PRENDIDO.TELAR",
+        text: "CUAL.PRENDIDO.TELAR",
         width: 150,
         height: 150,
         colorDark : "#000000",
@@ -351,10 +351,14 @@ if (closePaymentModal) {
 
 sendVoucherBtn.addEventListener("click", () => {
   const wsNumber = CONFIG.phoneTel.replace("+", "");
-  const wsText = encodeURIComponent(`Hola, acabo de transferir el honorario para la consulta (${CONFIG.paymentLabel}) al alias CAUL.PRENDIDO.TELAR. Adjunto mi comprobante para habilitar la llamada:`);
+  const wsText = encodeURIComponent(`Hola, acabo de transferir el honorario para la consulta (${CONFIG.paymentLabel}) al alias CUAL.PRENDIDO.TELAR. Adjunto mi comprobante para habilitar la llamada:`);
   window.open(`https://wa.me/${wsNumber}?text=${wsText}`, "_blank");
+  
+  // Desbloqueamos la página localmente (sistema de confianza)
+  setPaidState(true);
+  
   paymentDialog.close();
-  showToast("Redirigiendo a WhatsApp. Una vez verificado, destrabaremos tu llamada.");
+  showToast("Redirigiendo a WhatsApp. Tu llamada en la web ya fue habilitada.");
 });
 
 resetPayment.addEventListener("click", () => {
