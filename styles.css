@@ -781,10 +781,8 @@ input[type="checkbox"] {
   background: rgba(12, 23, 25, 0.62);
 }
 
-.payment-dialog form {
-  display: grid;
-  gap: 18px;
-  padding: 22px;
+.payment-dialog > .dialog-head {
+  padding: 22px 22px 0;
 }
 
 .dialog-head {

@@ -17,6 +17,7 @@ const callButton = document.querySelector("#callButton");
 const paymentDialog = document.querySelector("#paymentDialog");
 const sendVoucherBtn = document.querySelector("#sendVoucherBtn");
 const closePaymentModal = document.querySelector("#closePaymentModal");
+const closePaymentModal2 = document.querySelector("#closePaymentModal2");
 const resetPayment = document.querySelector("#resetPayment");
 const paymentStatus = document.querySelector("#paymentStatus");
 const phoneReveal = document.querySelector("#phoneReveal");
@@ -349,16 +350,25 @@ if (closePaymentModal) {
   });
 }
 
+if (closePaymentModal2) {
+  closePaymentModal2.addEventListener("click", () => {
+    paymentDialog.close();
+  });
+}
+
 sendVoucherBtn.addEventListener("click", () => {
   const wsNumber = CONFIG.phoneTel.replace("+", "");
   const wsText = encodeURIComponent(`Hola, acabo de transferir el honorario para la consulta (${CONFIG.paymentLabel}) al alias CUAL.PRENDIDO.TELAR. Adjunto mi comprobante para habilitar la llamada:`);
-  window.open(`https://wa.me/${wsNumber}?text=${wsText}`, "_blank");
   
-  // Desbloqueamos la página localmente (sistema de confianza)
+  // 1. Desbloquear PRIMERO (antes de cualquier otra cosa)
   setPaidState(true);
   
+  // 2. Cerrar el diálogo
   paymentDialog.close();
-  showToast("Redirigiendo a WhatsApp. Tu llamada en la web ya fue habilitada.");
+  
+  // 3. Abrir WhatsApp y mostrar toast
+  window.open(`https://wa.me/${wsNumber}?text=${wsText}`, "_blank");
+  showToast("✅ Llamada habilitada. Enviando comprobante por WhatsApp...");
 });
 
 resetPayment.addEventListener("click", () => {
